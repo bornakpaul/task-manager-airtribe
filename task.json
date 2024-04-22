@@ -89,6 +89,12 @@
       "title": "Install jsonwebtoken",
       "description": "Install jsonwebtoken",
       "completed": false
+    },
+    {
+      "id": 16,
+      "title": "Dummy",
+      "description": "Create a new project using the Express application generator",
+      "completed": false
     }
   ]
 }

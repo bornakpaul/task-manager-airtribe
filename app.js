@@ -1,5 +1,7 @@
 import express from "express";
 import tasks from "./task.json" with {type: "json"};
+import fs from 'fs';
+import Validator from "./helpers/validator.js";
 
 const app = express();
 const port = 3001;
@@ -24,6 +26,30 @@ app.get('/tasks/:id',(req, res) => {
     return res.status(200).json(filteredTask);
     }catch(e){
         return res.status(500).json('Something went wrong');
+    }
+});
+
+// create a task
+app.post('/tasks', (req, res) => {
+    try{
+        const taskDetails = req.body;
+        console.log(taskDetails);
+        let taskDataModified = tasks;
+        taskDataModified.tasks.push(taskDetails);
+        if(Validator.validateTaskInfo(taskDetails).status){
+            fs.writeFile('./task.json', JSON.stringify(taskDataModified), {encoding: 'utf8', flag:'w'}, (err, data) => {
+                if(err){
+                    return res.status(500).send(`Something went wrong while creating the task ${err}`);
+                } else {
+                    return res.status(201).send('Successfully created the task');
+                }
+            });
+        }else{
+            let message = Validator.validateTaskInfo(taskDetails).message;
+            return res.status(400).send(message); 
+        }
+    }catch(e){
+        return res.status(500).send('Error encountered');
     }
 });
 
