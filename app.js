@@ -9,9 +9,16 @@ const port = 3001;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// get all tasks
+// get all tasks, if query param status is shared then list is filtered
+// '/tasks?status=true'
 app.get('/tasks',(req, res) => {
-    return res.status(200).json(tasks);
+    const status = req.query.status;
+    let filteredTask = tasks.tasks;
+    if(status){
+        filteredTask = filteredTask.filter(val => val.completed === JSON.parse(status));
+        console.log(`status : ${status}`);
+    }
+    return res.status(200).json(filteredTask);
 });
 
 // get task by id
@@ -54,9 +61,10 @@ app.post('/tasks', (req, res) => {
 });
 
 // edit a task
-app.post('/tasks/:id', (req, res) => {
+app.put('/tasks/:id', (req, res) => {
     try{
         const taskId= req.params.id;
+        console.log(taskId);
         const taskDetails = req.body;
         let taskDataModified = tasks;
         // get the index of the requested task
